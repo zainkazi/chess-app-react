@@ -4,7 +4,7 @@ import Square from "../Square/Square";
 import "./Board.css";
 
 //Pieces
-import kingBla from "../../assets/pieces/king-black.svg";
+import kingBlack from "../../assets/pieces/king-black.svg";
 
 let temp = [];
 let board = [];
@@ -15,7 +15,7 @@ for (var i = 1; i <= 8; i++) {
       id: { i, j },
       name: `${String.fromCharCode(96 + i)}${j}`,
       color: (i + j) % 2 == 0 ? "bg-gray-600" : "bg-white",
-      occupudBy: "",
+      occupiedBy: "",
     });
   }
 }
@@ -37,7 +37,9 @@ const Board = () => {
           name={square.name}
           color={square.color}
           occupiedBy={square.occupiedBy}
-        />
+        >
+          {square.occupiedBy.length == 0 ? null : <Piece image={kingBlack} />}
+        </Square>
       ))}
     </div>
   );
