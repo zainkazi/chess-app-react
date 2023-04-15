@@ -19,7 +19,35 @@ import blackPawn from "../../assets/pieces/black-pawn.svg";
 
 let temp = [];
 let initialBoard = [];
-let lookupTable = {};
+let boardState = {};
+let possibleMoves = {
+  // king method returns true if the destination square is the possible move from the current square
+  king: (currentSquare, destinationSquare) =>
+    [-1, 0, 1].includes(
+      destinationSquare[0].charCodeAt(0) - currentSquare[0].charCodeAt(0)
+    ) &&
+    [-1, 0, 1].includes(destinationSquare[1] - currentSquare[1]) &&
+    !(
+      destinationSquare[0].charCodeAt(0) - currentSquare[0].charCodeAt(0) ==
+        0 && destinationSquare[1] - currentSquare[0] == 0
+    ),
+};
+
+// These are the functions for finding the possible moves for all the pieces
+let possibleMovesFunctions = {
+  king: (currentSquare) =>
+    Object.keys(boardState).filter(
+      (destinationSquare) =>
+        [-1, 0, 1].includes(
+          destinationSquare[0].charCodeAt(0) - currentSquare[0].charCodeAt(0)
+        ) &&
+        [-1, 0, 1].includes(destinationSquare[1] - currentSquare[1]) &&
+        !(
+          destinationSquare[0].charCodeAt(0) - currentSquare[0].charCodeAt(0) ==
+            0 && destinationSquare[1] - currentSquare[1] == 0
+        )
+    ),
+};
 
 for (var i = 1; i <= 8; i++) {
   for (var j = 1; j <= 8; j++) {
@@ -32,15 +60,15 @@ for (var i = 1; i <= 8; i++) {
 
     // Create the Lookup table
     // if (`${String.fromCharCode(96 + i)}${j}`[1] == "2") {
-    //   lookupTable[`${String.fromCharCode(96 + i)}${j}`] = whitePawn;
+    //   boardState[`${String.fromCharCode(96 + i)}${j}`] = whitePawn;
     // } else if (`${String.fromCharCode(96 + i)}${j}`[1] == "7") {
-    //   lookupTable[`${String.fromCharCode(96 + i)}${j}`] = blackPawn;
+    //   boardState[`${String.fromCharCode(96 + i)}${j}`] = blackPawn;
     // } else {
-    //   lookupTable[`${String.fromCharCode(96 + i)}${j}`] = "";
+    //   boardState[`${String.fromCharCode(96 + i)}${j}`] = "";
     // }
 
-    lookupTable[`${String.fromCharCode(96 + i)}${j}`] = { name: "", url: "" };
-    lookupTable["e1"] = {
+    boardState[`${String.fromCharCode(96 + i)}${j}`] = { name: "", url: "" };
+    boardState["e1"] = {
       name: "king-white",
       imageUrl: kingWhite,
     };
@@ -54,8 +82,9 @@ initialBoard = [].concat(...initialBoard);
 
 const Board = () => {
   const [board, setBoard] = useState(initialBoard);
+  console.log(possibleMovesFunctions.king("e1"));
 
-  console.log(lookupTable);
+  // console.log(boardState);
 
   return (
     <div className="board">
@@ -67,8 +96,8 @@ const Board = () => {
           color={square.color}
           occupiedBy={square.occupiedBy}
         >
-          {lookupTable[square.name].name.length == 0 ? null : (
-            <Piece image={lookupTable[square.name].imageUrl} />
+          {boardState[square.name].name.length == 0 ? null : (
+            <Piece image={boardState[square.name].imageUrl} />
           )}
         </Square>
       ))}
