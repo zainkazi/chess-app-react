@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Piece from "../Piece/Piece";
 import Square from "../Square/Square";
 import "./Board.css";
@@ -67,7 +67,10 @@ for (var i = 1; i <= 8; i++) {
     //   boardState[`${String.fromCharCode(96 + i)}${j}`] = "";
     // }
 
-    boardState[`${String.fromCharCode(96 + i)}${j}`] = { name: "", url: "" };
+    boardState[`${String.fromCharCode(96 + i)}${j}`] = {
+      name: "",
+      imageUrl: "",
+    };
     boardState["e1"] = {
       name: "king-white",
       imageUrl: kingWhite,
@@ -82,9 +85,31 @@ initialBoard = [].concat(...initialBoard);
 
 const Board = () => {
   const [board, setBoard] = useState(initialBoard);
-  console.log(possibleMovesFunctions.king("e1"));
+  const [lookupTable, setLookupTable] = useState(boardState);
 
-  // console.log(boardState);
+  useEffect(() => {
+    movePiece("e1", "e2");
+  }, []);
+
+  useEffect(() => {
+    console.log(lookupTable);
+  }, [lookupTable]);
+
+  const movePiece = (currentSquare, destinationSquare) => {
+    const piece = lookupTable[currentSquare].name.split("-")[0];
+
+    if (piece == "king") {
+      if (
+        possibleMovesFunctions.king(currentSquare).includes(destinationSquare)
+      ) {
+        setLookupTable({
+          ...lookupTable,
+          [destinationSquare]: lookupTable[currentSquare],
+          [currentSquare]: { name: "", imageUrl: "" },
+        });
+      }
+    }
+  };
 
   return (
     <div className="board">
@@ -96,8 +121,11 @@ const Board = () => {
           color={square.color}
           occupiedBy={square.occupiedBy}
         >
-          {boardState[square.name].name.length == 0 ? null : (
-            <Piece image={boardState[square.name].imageUrl} />
+          {lookupTable[square.name].name.length == 0 ? null : (
+            <Piece
+              location={square.name}
+              image={lookupTable[square.name].imageUrl}
+            />
           )}
         </Square>
       ))}
