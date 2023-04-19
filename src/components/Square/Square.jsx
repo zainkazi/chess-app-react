@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 
-const Square = ({ children, id, color, occupiedBy, name }) => {
+const Square = ({ onSquareClick, children, color, name }) => {
+  const [flag, setFlag] = useState(false);
+
   return (
-    <div className={`${color} select-none pointer-events-none text-pink-600`}>
+    <div
+      onClick={() => onSquareClick(name)}
+      className={`${color} text-pink-600`}
+    >
       {name}
       {children}
     </div>

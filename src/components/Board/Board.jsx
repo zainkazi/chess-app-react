@@ -17,6 +17,9 @@ import knightBlack from "../../assets/pieces/black-knight.svg";
 import whitePawn from "../../assets/pieces/white-pawn.svg";
 import blackPawn from "../../assets/pieces/black-pawn.svg";
 
+//Grey dot
+import dot from "../../assets/misc/grey-dot.png";
+
 let temp = [];
 let initialBoard = [];
 let boardState = {};
@@ -86,10 +89,14 @@ initialBoard = [].concat(...initialBoard);
 const Board = () => {
   const [board, setBoard] = useState(initialBoard);
   const [lookupTable, setLookupTable] = useState(boardState);
+  const [pieceMovementFlag, setPieceMovementFlag] = useState(false);
+  const [currentClickedSquareAndPiece, setCurrentClickedSquareAndPiece] =
+    useState({ square: "", piece: "", moves: [] });
 
   useEffect(() => {
-    console.log(board);
-  }, [lookupTable]);
+    console.log(currentClickedSquareAndPiece);
+    console.log(pieceMovementFlag);
+  }, [pieceMovementFlag, currentClickedSquareAndPiece]);
 
   const movePiece = (currentSquare, destinationSquare) => {
     const piece = lookupTable[currentSquare].name.split("-")[0];
@@ -107,15 +114,46 @@ const Board = () => {
     }
   };
 
+  // Moving the piece using click
+  const handleClick = (name) => {
+    let piece = lookupTable[name].name;
+    console.log(piece);
+
+    if (!pieceMovementFlag) {
+      if (piece.length == 0) {
+        return;
+      } else {
+        piece = piece.split("-")[0];
+
+        if (piece == "king") {
+          const possibleMoves = possibleMovesFunctions.king(name);
+          setCurrentClickedSquareAndPiece(() => ({
+            square: name,
+            piece: piece,
+            moves: possibleMoves,
+          }));
+        }
+        setPieceMovementFlag(true);
+      }
+    } else if (pieceMovementFlag) {
+      if (piece.length == 0) {
+        if (currentClickedSquareAndPiece.moves.includes(name)) {
+          movePiece(currentClickedSquareAndPiece.square, name);
+        }
+      }
+      setCurrentClickedSquareAndPiece({ square: "", piece: "", moves: [] });
+      setPieceMovementFlag(false);
+    }
+  };
+
   return (
     <div className="board">
-      {initialBoard.map((square) => (
+      {board.map((square) => (
         <Square
+          onSquareClick={handleClick}
           key={square.name}
-          id={square.id}
           name={square.name}
           color={square.color}
-          occupiedBy={square.occupiedBy}
         >
           {lookupTable[square.name].name.length == 0 ? null : (
             <Piece
