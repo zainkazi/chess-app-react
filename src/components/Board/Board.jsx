@@ -161,6 +161,10 @@ const Board = () => {
               image={lookupTable[square.name].imageUrl}
             />
           )}
+
+          {currentClickedSquareAndPiece.moves.includes(square.name) && (
+            <img src={dot} />
+          )}
         </Square>
       ))}
     </div>
