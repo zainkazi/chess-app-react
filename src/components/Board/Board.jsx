@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Piece from "../Piece/Piece";
 import Square from "../Square/Square";
+import initializeBoard from "../../services/initializeBoard";
 import "./Board.css";
 
 //Pieces
@@ -20,22 +21,6 @@ import blackPawn from "../../assets/pieces/black-pawn.svg";
 //Grey dot
 import dot from "../../assets/misc/grey-dot.png";
 
-let temp = [];
-let initialBoard = [];
-let boardState = {};
-// let possibleMoves = {
-//   // king method returns true if the destination square is the possible move from the current square
-//   king: (currentSquare, destinationSquare) =>
-//     [-1, 0, 1].includes(
-//       destinationSquare[0].charCodeAt(0) - currentSquare[0].charCodeAt(0)
-//     ) &&
-//     [-1, 0, 1].includes(destinationSquare[1] - currentSquare[1]) &&
-//     !(
-//       destinationSquare[0].charCodeAt(0) - currentSquare[0].charCodeAt(0) ==
-//         0 && destinationSquare[1] - currentSquare[0] == 0
-//     ),
-// };
-
 // These are the functions for finding the possible moves for all the pieces
 let possibleMovesFunctions = {
   king: (currentSquare) =>
@@ -52,39 +37,12 @@ let possibleMovesFunctions = {
     ),
 };
 
-// Inititalizing the empty board and board state
-for (var i = 1; i <= 8; i++) {
-  for (var j = 1; j <= 8; j++) {
-    temp.push({
-      //id: { j, i },
-      name: `${String.fromCharCode(96 + j)}${i}`,
-      color: (i + j) % 2 == 0 ? "bg-gray-600" : "bg-white",
-    });
+const { initialBoard, boardState } = initializeBoard();
 
-    // Create the Lookup table
-    // if (`${String.fromCharCode(96 + i)}${j}`[1] == "2") {
-    //   boardState[`${String.fromCharCode(96 + i)}${j}`] = whitePawn;
-    // } else if (`${String.fromCharCode(96 + i)}${j}`[1] == "7") {
-    //   boardState[`${String.fromCharCode(96 + i)}${j}`] = blackPawn;
-    // } else {
-    //   boardState[`${String.fromCharCode(96 + i)}${j}`] = "";
-    // }
-
-    boardState[`${String.fromCharCode(96 + i)}${j}`] = {
-      name: "",
-      imageUrl: "",
-    };
-    boardState["e1"] = {
-      name: "king-white",
-      imageUrl: kingWhite,
-    };
-  }
-}
-
-for (var i = 63; i >= 0; i -= 8) {
-  initialBoard.push(temp.slice(i - 7, i + 1));
-}
-initialBoard = [].concat(...initialBoard);
+boardState["e1"] = {
+  name: "king-white",
+  imageUrl: kingWhite,
+};
 
 const Board = () => {
   const [board, setBoard] = useState(initialBoard);
