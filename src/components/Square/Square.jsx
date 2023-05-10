@@ -6,7 +6,7 @@ const Square = ({ onSquareClick, children, color, name }) => {
   return (
     <div
       onClick={() => onSquareClick(name)}
-      className={`${color} text-pink-600`}
+      className={`${color} text-pink-600 relative`}
     >
       {name}
       {children}

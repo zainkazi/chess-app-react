@@ -11,7 +11,7 @@ const Piece = ({
   possibleMoves,
 }) => {
   return (
-    <div>
+    <div className="absolute">
       <img src={image} className="w-10" alt="piece" />
     </div>
   );
